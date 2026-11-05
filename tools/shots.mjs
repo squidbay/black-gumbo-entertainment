@@ -13,7 +13,7 @@ const VIEWPORTS = [
   { name: 'land-844', width: 844, height: 390, mobile: true },
 ];
 const TARGETS = [
-  ['home', '', '.discipline-grid', 'disciplines'],
+  ['home', '', 'section[aria-labelledby="disc-h"]', 'disciplines'],
   ['home', '', '.card-grid', 'selected-work'],
   ['film', 'film/', '#portfolio .card-grid', 'film-portfolio'],
   ['msots', 'film/my-side-of-the-story/', '.related .card-grid, #related-h + .card-grid', 'related'],

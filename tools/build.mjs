@@ -286,15 +286,26 @@ function homePage() {
     ? `<a class="button button-secondary" href="${rel}${projectHref(f)}#media-h">Watch Trailer</a>`
     : soonChip('Trailer coming soon');
   const selected = ['queen-nerd', 'inside-the-ringing-bell', 'butterfly-lane', 'coffee-break'].map(bySlug);
+  // Category row: heading above, poster at its natural ratio, copy below. No frames.
   const discCards = disciplines
     .map((d) => {
       const p = d.image && bySlug(d.image);
-      const art = p ? projectFrame(rel, p, 'discipline') : framePlaceholder(rel, 'discipline', d.title, 'Tracks coming soon');
-      return `<article class="discipline">
-  <div class="discipline-art">${art}</div>
-  <h3 class="h3"><a class="card-link" href="${rel}${d.href}">${d.title}</a></h3>
-  <p>${esc(d.line)}</p>
-  <span class="text-link" aria-hidden="true">${d.action}</span>
+      const art = p
+        ? img(rel, p.image, { sizes: '(min-width: 760px) 280px, 136px', cls: 'category-poster' })
+        : `<div class="music-panel" aria-hidden="true">
+      <img src="${rel}assets/logo/symbol-gold.svg" alt="" width="100" height="100">
+      <span class="music-panel-title">Tracks coming soon</span>
+      <span class="music-panel-note">Official listening links will appear here.</span>
+    </div>`;
+      return `<article class="category">
+  <h3 class="category-title"><a class="card-link" href="${rel}${d.href}">${d.title}</a></h3>
+  <div class="category-body">
+    <div class="category-art">${art}</div>
+    <div class="category-copy">
+      <p>${esc(d.line)}</p>
+      <span class="text-link" aria-hidden="true">${d.action}</span>
+    </div>
+  </div>
 </article>`;
     })
     .join('');
@@ -334,7 +345,7 @@ function homePage() {
   <div class="wrap">
     <p class="section-num">Three disciplines</p>
     <h2 class="h2" id="disc-h">Film, television and music</h2>
-    <div class="discipline-grid">${discCards}</div>
+    <div class="category-grid">${discCards}</div>
   </div>
 </section>
 

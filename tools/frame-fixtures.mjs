@@ -77,7 +77,7 @@ const problems = [];
 for (const vp of VIEWPORTS) {
   const ctx = await browser.newContext({ viewport: { width: vp.width, height: vp.height }, isMobile: !!vp.mobile, hasTouch: !!vp.mobile, deviceScaleFactor: 2 });
   const page = await ctx.newPage();
-  for (const [path, scope] of [['', '.discipline-grid'], ['', '.card-grid'], ['film/', '#portfolio .card-grid']]) {
+  for (const [path, scope] of [['', '.card-grid'], ['film/', '#portfolio .card-grid']]) {
     for (const mode of ['real', 'fixtures']) {
       await page.goto(BASE + path, { waitUntil: 'networkidle' });
       if (mode === 'fixtures') {
