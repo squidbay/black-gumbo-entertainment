@@ -356,6 +356,9 @@ body.menu-open { overflow: hidden; }
   .hero-grid { grid-template-columns: minmax(0, auto) minmax(0, 1fr); gap: 28px; align-items: start; }
   .hero-art img, .hero-art.is-tall img { max-height: calc(100svh - var(--header-h) - 48px); width: auto; max-width: 42vw; }
   .hero, .project-hero { padding: 16px 0 32px; }
+  /* Project pages carry a breadcrumb above the hero; keep the whole poster on the first screen. */
+  .project-hero .hero-art img, .project-hero .hero-art.is-tall img { max-height: calc(100svh - var(--header-h) - 104px); }
+  .breadcrumb { padding-top: 4px; }
   .display { font-size: 30px; margin-bottom: 10px; }
   .logline { font-size: 15px; line-height: 1.55; }
   .hero-copy { display: flex; flex-direction: column; }
