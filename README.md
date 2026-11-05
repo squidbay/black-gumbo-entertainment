@@ -1,0 +1,47 @@
+# Black Gumbo Entertainment — customer review site
+
+Standalone review preview for Black Gumbo Entertainment, the creative partnership of Jerry L. White Jr. and Sean Thomas. Prepared by SquidBay.
+
+- **Review URL:** https://squidbay.github.io/black-gumbo-entertainment/
+- **Stage:** GitHub Pages review preview. Pages carry `noindex`; the site is publicly reachable, not private.
+- **Foundation:** Website Plan v1.0 (Nov 4, 2026) and P1 wireframes. Colors and fonts: P2 option 05, Analog Cinema (Oswald 500 headings, Lora body; `#221E1B` / `#2D2824` grounds, `#EDE3D1` text, `#CF8B5C` copper UI accent). Logo: approved option 04 flat masters in gold `#C9A24A`.
+
+## Layout
+
+```
+src/content/site.mjs       company, navigation, footer, contact settings (email, form endpoint, social)
+src/content/projects.mjs   one record per project: card + optional project page
+src/content/videos.mjs     every YouTube link on the site, in one place
+src/static/                CSS, JS, fonts, logo, icons, artwork (copied into docs/)
+tools/build.mjs            renders all pages into docs/
+tools/check.mjs            rendered checks: 13 pages × 7 viewports + menu/form interactions
+docs/                      built site, served by GitHub Pages (main branch, /docs)
+```
+
+```bash
+node tools/build.mjs
+```
+
+All links are relative, so the build works under the `/black-gumbo-entertainment/` subpath and at a domain root. Each route is a directory with its own `index.html`, so direct navigation and refresh work everywhere.
+
+## Updating video
+
+Open `src/content/videos.mjs`, paste the YouTube URL into `youtube`, set `approved: true`, rebuild and push. Until then each project shows a poster-led "coming soon" state. The player loads only when a visitor presses play (privacy-enhanced mode; no autoplay, no automatic sound). Set `status: 'unavailable'` to show the unavailable state if a link is withdrawn. A full film is published only with Jerry and Sean's explicit approval.
+
+## Contact
+
+`businessEmail` and `formEndpoint` in `site.mjs` are empty, so the contact page is a clearly labelled review demonstration: it validates input and states that nothing was sent. It never shows a success message without a confirmed delivery.
+
+## Content still needed from Jerry and Sean
+
+1. **My Side of the Story** — official YouTube trailer URL; full-film decision (public viewing vs. screener by request); confirm "Short film" and current status; year/runtime; approved synopsis (the site uses the logline only); higher-resolution master poster if one exists.
+2. **Business contact** — public business email and the form delivery route; official social links for the company and for each partner (only @Whitejr916 is linked today).
+3. **Partner bios** — short bio and role for Jerry and for Sean; an approved portrait of each; which person is which in the joint studio photo. The joint photo includes an earlier Black Gumbo logo in its top-right corner — confirm it is still the image to use.
+4. **Film titles** — Inside The Ringing Bell, Butterfly Lane, Coffee Break, Low Hanging Fruit: category, format, exact credit, status, and permission to publish the artwork (Low Hanging Fruit has no artwork yet).
+5. **Queen Nerd** — approved series description, confirmed status, concept teaser YouTube URL, and whether the one-sheet may be a public download.
+6. **Music** — first cleared tracks (title, role, collaborators, listening link), lead artwork, and which channels are official; JOLLY TIME concept video URL.
+7. **Acting credits and appearances** — role/year for The Lost Son Returns As The Duke; which premiere, screening or on-set photos may appear, with captions; whether TRUTH & Humor and Whispers of Desire belong on the site.
+
+## Out of scope here
+
+Production build, Cloudflare deployment, domain connection, contact delivery and the Agent website-editor integration follow customer approval of this preview. Fonts are Oswald and Lora (SIL Open Font License 1.1), self-hosted.

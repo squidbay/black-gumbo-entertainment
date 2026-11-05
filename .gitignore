@@ -1,0 +1,5 @@
+node_modules/
+.serve/
+.DS_Store
+check-output/
+.claude/
