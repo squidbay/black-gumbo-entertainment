@@ -6,12 +6,13 @@
 //
 //   node tools/build.mjs
 
-import { cp, mkdir, rm, writeFile } from 'node:fs/promises';
+import { appendFile, cp, mkdir, rm, writeFile } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { site, nav, disciplines, inquiryTypes } from '../src/content/site.mjs';
 import { projects, kindLabel, categoryLabel, bySlug } from '../src/content/projects.mjs';
 import { videos, youtubeId } from '../src/content/videos.mjs';
+import { frames, frameSizes } from '../src/content/frames.mjs';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const OUT = join(ROOT, 'docs');
@@ -145,14 +146,39 @@ function img({ rel, src, w, h, alt, sizes = '(min-width: 900px) 40vw, 100vw', cl
 const projectImg = (rel, p, opts = {}) =>
   img({ rel, src: `projects/${p.image.src}`, w: p.image.w, h: p.image.h, alt: p.image.alt, ...opts });
 
+// Media frame: complete artwork at its natural proportions inside a fixed-shape
+// slot. Shape and fill come from src/content/frames.mjs, never from page CSS.
+function frame(rel, image, preset, { cls = '' } = {}) {
+  const f = frames[preset];
+  const fit = image.fit || f.fit;
+  const base = `${rel}assets/img/${image.src}`;
+  const backdrop = fit === 'backdrop'
+    ? `<img class="frame-backdrop" src="${base}-640.jpg" alt="" aria-hidden="true" loading="lazy" decoding="async">`
+    : '';
+  return `<div class="frame frame--${preset} frame--${fit}${cls ? ` ${cls}` : ''}">
+    ${backdrop}${img({ rel, src: image.src, w: image.w, h: image.h, alt: image.alt, sizes: frameSizes[preset], cls: 'frame-art' })}
+  </div>`;
+}
+
+// Placeholder with the same footprint and weight as a framed image.
+function framePlaceholder(rel, preset, title, note = '') {
+  return `<div class="frame frame--${preset} frame--placeholder" aria-hidden="true">
+    <div class="frame-placeholder">
+      <img src="${rel}assets/logo/symbol-gold.svg" alt="" width="100" height="100">
+      <span class="ph-text"><span class="ph-title">${esc(title)}</span>${note ? `<span class="ph-note">${esc(note)}</span>` : ''}</span>
+    </div>
+  </div>`;
+}
+
+const projectFrame = (rel, p, preset) =>
+  p.image ? frame(rel, { ...p.image, src: `projects/${p.image.src}` }, preset) : framePlaceholder(rel, preset, p.title, 'Artwork coming soon');
+
 const projectHref = (p) => `${p.category}/${p.slug}/`;
 
 function card(rel, p, { headingLevel = 3 } = {}) {
   const meta = join2(categoryLabel[p.category], p.format);
   const detail = join2(p.contribution, p.status) || 'Details coming soon';
-  const art = p.image
-    ? projectImg(rel, p, { sizes: '(min-width: 1200px) 280px, (min-width: 700px) 30vw, 46vw' })
-    : `<div class="art-placeholder" aria-hidden="true"><img src="${rel}assets/logo/symbol-simple-gold.svg" alt="" width="100" height="100"><span>${esc(p.title)}</span></div>`;
+  const art = projectFrame(rel, p, 'card');
   const badge = p.video && videoReady(p.video) ? `<span class="badge">${esc(videos[p.video].label)}</span>` : '';
   const title = p.page
     ? `<a class="card-link" href="${rel}${projectHref(p)}">${esc(p.title)}</a>`
@@ -251,9 +277,7 @@ function homePage() {
   const discCards = disciplines
     .map((d) => {
       const p = d.image && bySlug(d.image);
-      const art = p
-        ? projectImg(rel, p, { sizes: '(min-width: 900px) 30vw, 46vw' })
-        : `<div class="art-placeholder" aria-hidden="true"><img src="${rel}assets/logo/symbol-gold.svg" alt="" width="100" height="100"><span>Music</span></div>`;
+      const art = p ? projectFrame(rel, p, 'discipline') : framePlaceholder(rel, 'discipline', d.title, 'Tracks coming soon');
       return `<article class="discipline">
   <div class="discipline-art">${art}</div>
   <h3 class="h3"><a class="card-link" href="${rel}${d.href}">${d.title}</a></h3>
@@ -489,7 +513,7 @@ ${pageIntro('Music', 'Songwriting, tracks and music-led projects by Jerry L. Whi
   <div class="wrap">
     <h2 class="h2" id="led-h">Music-led projects</h2>
     <article class="music-project">
-      <div class="art-placeholder" aria-hidden="true"><img src="${rel}assets/logo/symbol-simple-gold.svg" alt="" width="100" height="100"><span>Animation concept</span></div>
+      <div class="music-project-art">${framePlaceholder(rel, 'wide', 'Animation concept', 'Video coming soon')}</div>
       <div>
         <p class="eyebrow">${esc(kindLabel[jt.kind])}</p>
         <h3 class="h3"><a class="card-link" href="${rel}${projectHref(jt)}">${esc(jt.title)}</a></h3>
@@ -612,6 +636,11 @@ async function write(path, html) {
 await rm(OUT, { recursive: true, force: true });
 await cp(join(ROOT, 'src/static'), OUT, { recursive: true });
 await writeFile(join(OUT, '.nojekyll'), '');
+// Frame shapes come from src/content/frames.mjs and are appended to the stylesheet.
+await appendFile(
+  join(OUT, 'assets/css/site.css'),
+  `\n/* Generated from src/content/frames.mjs */\n${Object.entries(frames).map(([k, f]) => `.frame--${k} { --frame-ratio: ${f.ratio}; }`).join('\n')}\n`,
+);
 await writeFile(
   join(OUT, 'site.webmanifest'),
   JSON.stringify(

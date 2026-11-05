@@ -59,9 +59,12 @@ for (const vp of VIEWPORTS) {
       for (const img of document.images) {
         const cs = getComputedStyle(img);
         if (cs.display === 'none' || img.closest('[hidden]')) continue;
+        if (img.classList.contains('frame-backdrop') && cs.objectFit !== 'cover') out.issues.push('backdrop not cover');
+        if (img.classList.contains('frame-art') && cs.objectFit !== 'contain') out.issues.push(`artwork not contained ${img.src.split('/').pop()}`);
         if (!img.naturalWidth) { out.issues.push(`broken image ${img.currentSrc || img.src}`); continue; }
         const b = img.getBoundingClientRect();
-        if (cs.objectFit !== 'contain' && b.width && b.height) {
+        // contain/cover never distort (cover is only used for the decorative frame backdrop).
+        if (!['contain', 'cover'].includes(cs.objectFit) && b.width && b.height) {
           const d = Math.abs(b.width / b.height - img.naturalWidth / img.naturalHeight) / (img.naturalWidth / img.naturalHeight);
           if (d > 0.02) out.issues.push(`distorted image ${img.src.split('/').pop()} (${d.toFixed(3)})`);
         }

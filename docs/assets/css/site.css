@@ -142,9 +142,55 @@ body.menu-open { overflow: hidden; }
 /* Cards */
 .card-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 32px 16px; margin-top: 24px; }
 .card { position: relative; min-width: 0; }
-.card-art, .discipline-art { position: relative; aspect-ratio: 2 / 3; background: var(--surface); border: 1px solid var(--rule); margin-bottom: 14px; display: flex; align-items: center; justify-content: center; overflow: hidden; }
-.section-surface .card-art { background: var(--bg); }
-.card-art img, .discipline-art img { width: 100%; height: 100%; object-fit: contain; }
+/* Cards and tiles share row tracks with their neighbours (subgrid), so labels,
+   titles and details line up across each row whatever the text length. */
+@supports (grid-template-rows: subgrid) {
+  .card { display: grid; grid-row: span 4; grid-template-rows: subgrid; row-gap: 0; align-content: start; }
+  .discipline { display: grid; grid-row: span 4; grid-template-rows: subgrid; row-gap: 0; align-content: start; }
+}
+.card-art, .discipline-art { position: relative; margin-bottom: 14px; }
+
+/* ---------- Media frame (shape + fit from src/content/frames.mjs) ---------- */
+.frame {
+  position: relative; aspect-ratio: var(--frame-ratio, 2 / 3); overflow: hidden; isolation: isolate;
+  background: var(--surface); border: 1px solid var(--rule);
+}
+.section-surface .frame { background: var(--bg); }
+/* Decorative fill: the same artwork, blurred and darkened, behind the sharp original. */
+.frame-backdrop {
+  position: absolute; inset: -12%; width: 124%; height: 124%; max-width: none; object-fit: cover;
+  filter: blur(22px) brightness(0.42) saturate(0.75); z-index: -1;
+}
+/* The artwork itself: complete, natural proportions, centred. */
+.frame .frame-art {
+  position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; object-position: center;
+  filter: drop-shadow(0 8px 22px rgba(0, 0, 0, 0.45));
+}
+.frame--plain .frame-art { filter: none; }
+.frame--placeholder {
+  background:
+    radial-gradient(ellipse 70% 55% at 50% 42%, rgba(201, 162, 74, 0.13), transparent 70%),
+    linear-gradient(165deg, #2D2824 0%, #1C1916 100%);
+}
+.frame-placeholder {
+  position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 10px; padding: 12%; text-align: center;
+}
+.frame-placeholder::before { content: ''; position: absolute; inset: 14px; border: 1px solid rgba(201, 162, 74, 0.22); pointer-events: none; }
+.frame--placeholder { container-type: size; }
+.frame-placeholder img { width: min(46cqw, 160px); height: auto; margin-bottom: 8px; }
+.ph-text { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+/* Wide frames: mark beside the label, so the placeholder keeps its weight without clipping. */
+@container (min-aspect-ratio: 6 / 5) {
+  .frame-placeholder { flex-direction: row; gap: 7cqw; padding: 8% 10%; }
+  .frame-placeholder img { width: min(24cqw, 140px); margin: 0; }
+  .ph-text { align-items: flex-start; text-align: left; }
+  .ph-title::before { display: none; }
+  .ph-title::after { margin-right: 0; }
+}
+.ph-title { font-family: var(--font-head); font-weight: 500; text-transform: uppercase; letter-spacing: 0.18em; font-size: clamp(14px, 1.6vw, 18px); color: var(--text); }
+.ph-note { font-family: var(--font-body); font-style: italic; font-size: 14px; color: var(--text-2); }
+.ph-title::before, .ph-title::after { content: ''; display: inline-block; width: 18px; height: 1px; background: var(--logo-gold); opacity: 0.6; vertical-align: middle; margin: 0 10px; }
 .card-meta { font-size: 13px; color: var(--accent); margin: 0 0 4px; }
 .card-title { font-size: 20px; line-height: 1.2; margin: 0 0 6px; overflow-wrap: anywhere; }
 .card-detail { font-size: 15px; color: var(--text-2); margin: 0; }
@@ -153,7 +199,7 @@ body.menu-open { overflow: hidden; }
 .card-link:focus-visible { outline: none; }
 .card-link:focus-visible::after { outline: 2px solid var(--accent); outline-offset: 4px; }
 .is-linked:hover .card-title a, .discipline:hover .card-link, .feature:hover .card-link { color: var(--accent-hover); }
-.is-linked:hover .card-art { border-color: var(--accent); }
+.is-linked:hover .frame, .discipline:hover .frame { border-color: var(--accent); }
 .badge { position: absolute; left: 8px; top: 8px; font-size: 12px; background: var(--accent); color: var(--on-accent); padding: 4px 8px; }
 .art-placeholder { width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px; padding: 16px; text-align: center; background: linear-gradient(160deg, var(--surface), var(--bg)); }
 .art-placeholder img { width: 38%; max-width: 120px; height: auto; }
@@ -163,7 +209,6 @@ body.menu-open { overflow: hidden; }
 .discipline-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 32px 16px; }
 .discipline { position: relative; min-width: 0; }
 .discipline p { color: var(--text-2); font-size: 15px; margin-bottom: 4px; }
-.discipline:hover .discipline-art { border-color: var(--accent); }
 
 /* Feature (Film / Television index) */
 .feature { position: relative; display: grid; grid-template-columns: 1fr; gap: 28px; align-items: center; background: var(--surface); border: 1px solid var(--rule); padding: clamp(16px, 3vw, 36px); }
@@ -208,7 +253,7 @@ body.menu-open { overflow: hidden; }
 .soon-panel img { width: 72px; flex: none; }
 .soon-panel p:last-child { margin: 0; }
 .music-project { display: grid; grid-template-columns: 1fr; gap: 24px; position: relative; }
-.music-project .art-placeholder { aspect-ratio: 16 / 9; border: 1px solid var(--rule); }
+.music-project-art { min-width: 0; }
 
 /* Invitation */
 .invitation { padding: var(--space) 0; border-top: 1px solid var(--rule); background: var(--bg); }
@@ -317,7 +362,8 @@ body.menu-open { overflow: hidden; }
   .hero-copy .eyebrow, .hero-copy .presented, .hero-copy .display { order: 0; }
   .hero-copy .actions { order: 1; margin: 4px 0 16px; }
   .two-col { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 32px; }
-  .card-grid, .discipline-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .card-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .discipline-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .feature { grid-template-columns: minmax(0, 0.7fr) minmax(0, 1.3fr); }
   .feature-art img, .feature-art.is-tall img { max-height: 80svh; width: auto; }
   .mobile-menu-list a { min-height: 48px; font-size: 18px; }
@@ -326,7 +372,7 @@ body.menu-open { overflow: hidden; }
 
 @media (prefers-reduced-motion: no-preference) {
   html { scroll-behavior: smooth; }
-  .button, .card-art, .discipline-art, .primary-nav a, .filters a { transition: background-color 0.18s ease, border-color 0.18s ease, color 0.18s ease; }
+  .button, .frame, .primary-nav a, .filters a { transition: background-color 0.18s ease, border-color 0.18s ease, color 0.18s ease; }
 }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
@@ -335,5 +381,10 @@ body.menu-open { overflow: hidden; }
 /* Phone portrait: the third discipline spans both columns instead of leaving a gap. */
 @media (max-width: 759px) and (orientation: portrait) {
   .discipline:last-child { grid-column: 1 / -1; }
-  .discipline:last-child .discipline-art { aspect-ratio: 2 / 1; }
+  .discipline:last-child .frame.frame--discipline { --frame-ratio: 2 / 1; }
 }
+
+/* Generated from src/content/frames.mjs */
+.frame--card { --frame-ratio: 2 / 3; }
+.frame--discipline { --frame-ratio: 4 / 5; }
+.frame--wide { --frame-ratio: 16 / 9; }
