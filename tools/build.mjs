@@ -138,25 +138,37 @@ ${body}
 ${footer({ rel })}`;
 }
 
-function img({ rel, src, w, h, alt, sizes = '(min-width: 900px) 40vw, 100vw', cls = '', eager = false }) {
-  const base = `${rel}assets/img/${src}`;
-  return `<img class="${cls}" src="${base}.jpg" srcset="${base}-640.jpg 640w, ${base}.jpg ${w}w" sizes="${sizes}" width="${w}" height="${h}" alt="${esc(alt)}"${eager ? ' fetchpriority="high"' : ' loading="lazy"'} decoding="async">`;
+// Responsive candidates for an image record.
+//   { set: 'projects/x/x-v1', widths: [320, 640, 1010], webp: true }  → x-v1-320w.jpg … (+ .webp)
+//   { src: 'people/x' }                                              → x-640.jpg, x.jpg (legacy pair)
+function candidates(rel, image, ext) {
+  if (image.set) return image.widths.map((w) => [`${rel}assets/img/${image.set}-${w}w.${ext}`, w]);
+  const base = `${rel}assets/img/${image.src}`;
+  return [[`${base}-640.jpg`, 640], [`${base}.jpg`, image.w]];
+}
+const srcset = (list) => list.map(([u, w]) => `${u} ${w}w`).join(', ');
+const smallest = (rel, image) => candidates(rel, image, 'jpg')[0][0];
+
+function img(rel, image, { sizes = '(min-width: 900px) 40vw, 100vw', cls = '', eager = false } = {}) {
+  const jpg = candidates(rel, image, 'jpg');
+  const tag = `<img class="${cls}" src="${jpg[jpg.length - 1][0]}" srcset="${srcset(jpg)}" sizes="${sizes}" width="${image.w}" height="${image.h}" alt="${esc(image.alt)}"${eager ? ' fetchpriority="high"' : ' loading="lazy"'} decoding="async">`;
+  if (!image.webp) return tag;
+  return `<picture><source type="image/webp" srcset="${srcset(candidates(rel, image, 'webp'))}" sizes="${sizes}">${tag}</picture>`;
 }
 
-const projectImg = (rel, p, opts = {}) =>
-  img({ rel, src: `projects/${p.image.src}`, w: p.image.w, h: p.image.h, alt: p.image.alt, ...opts });
+const partnerPhoto = { src: 'people/jerry-and-sean', w: 1376, h: 768, alt: 'Jerry L. White Jr. and Sean Thomas in a recording studio.' };
+const projectImg = (rel, p, opts = {}) => img(rel, p.image, opts);
 
 // Media frame: complete artwork at its natural proportions inside a fixed-shape
 // slot. Shape and fill come from src/content/frames.mjs, never from page CSS.
 function frame(rel, image, preset, { cls = '' } = {}) {
   const f = frames[preset];
   const fit = image.fit || f.fit;
-  const base = `${rel}assets/img/${image.src}`;
   const backdrop = fit === 'backdrop'
-    ? `<img class="frame-backdrop" src="${base}-640.jpg" alt="" aria-hidden="true" loading="lazy" decoding="async">`
+    ? `<img class="frame-backdrop" src="${smallest(rel, image)}" alt="" aria-hidden="true" loading="lazy" decoding="async">`
     : '';
   return `<div class="frame frame--${preset} frame--${fit}${cls ? ` ${cls}` : ''}">
-    ${backdrop}${img({ rel, src: image.src, w: image.w, h: image.h, alt: image.alt, sizes: frameSizes[preset], cls: 'frame-art' })}
+    ${backdrop}${img(rel, image, { sizes: frameSizes[preset], cls: 'frame-art' })}
   </div>`;
 }
 
@@ -171,7 +183,7 @@ function framePlaceholder(rel, preset, title, note = '') {
 }
 
 const projectFrame = (rel, p, preset) =>
-  p.image ? frame(rel, { ...p.image, src: `projects/${p.image.src}` }, preset) : framePlaceholder(rel, preset, p.title, 'Artwork coming soon');
+  p.image ? frame(rel, p.image, preset) : framePlaceholder(rel, preset, p.title, 'Artwork coming soon');
 
 const projectHref = (p) => `${p.category}/${p.slug}/`;
 
@@ -338,7 +350,7 @@ function homePage() {
 
 <section class="section partnership" aria-labelledby="partner-h">
   <div class="wrap two-col align-center">
-    <div class="partner-art">${img({ rel, src: 'people/jerry-and-sean', w: 1376, h: 768, alt: 'Jerry L. White Jr. and Sean Thomas in a recording studio.', sizes: '(min-width: 900px) 50vw, 100vw' })}</div>
+    <div class="partner-art">${img(rel, partnerPhoto, { sizes: '(min-width: 900px) 50vw, 100vw' })}</div>
     <div>
       <p class="section-num">The partnership</p>
       <h2 class="h2" id="partner-h">Jerry L. White Jr. and Sean Thomas</h2>
@@ -537,7 +549,7 @@ function aboutPage() {
   const body = `
 <section class="about-hero" aria-labelledby="page-title">
   <div class="wrap two-col align-center">
-    <div class="partner-art">${img({ rel, src: 'people/jerry-and-sean', w: 1376, h: 768, alt: 'Jerry L. White Jr. and Sean Thomas in a recording studio.', eager: true, sizes: '(min-width: 900px) 50vw, 100vw' })}</div>
+    <div class="partner-art">${img(rel, partnerPhoto, { eager: true, sizes: '(min-width: 900px) 50vw, 100vw' })}</div>
     <div>
       <p class="eyebrow">About</p>
       <h1 class="h1" id="page-title">A creative partnership across film, television and music.</h1>

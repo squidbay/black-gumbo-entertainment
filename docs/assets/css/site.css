@@ -34,6 +34,7 @@ body {
   overflow-x: hidden;
 }
 img { max-width: 100%; height: auto; display: block; }
+picture { display: contents; }
 a { color: var(--accent); text-underline-offset: 3px; }
 a:hover { color: var(--accent-hover); }
 :focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: var(--radius); }

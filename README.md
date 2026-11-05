@@ -32,9 +32,23 @@ Open `src/content/videos.mjs`, paste the YouTube URL into `youtube`, set `approv
 
 `businessEmail` and `formEndpoint` in `site.mjs` are empty, so the contact page is a clearly labelled review demonstration: it validates input and states that nothing was sent. It never shows a success message without a confirmed delivery.
 
+## Poster artwork in this preview
+
+Artwork comes from the SquidBay poster handoff v2 (Nov 5, 2026). Only the web exports used on the site are published: originals, review masters, editable files and review sheets stay out of this repository. Each set is served as WebP with a JPEG fallback (320w / 640w / 960w / native).
+
+| Project | Artwork on the preview | Status |
+|---|---|---|
+| Queen Nerd | Faithful export **v2** (Display P3 → sRGB colour conversion, independently verified) | Ready |
+| Inside The Ringing Bell | Faithful export v1, unchanged composition | Ready |
+| My Side of the Story | **Review reconstruction v1** — the clipped top-right tagline is re-typeset (SOMETIMES THE TRUTH / HURTS. SOMETIMES IT HEALS.) over a small generated wall patch (x730–1110, y0–90). Face, title, starring line, kitchen and lower slogan are source pixels. Typeface is an approximation. | **Needs Jerry's approval** |
+| Coffee Break | **Review reconstruction v1** — generated top band and lower tabletop/cups, title re-typeset in cream/peach. The clipped top sentence is deliberately omitted (its ending is unknown). Faces and central wording are source pixels. | **Needs Jerry's approval** |
+| Butterfly Lane | Original illustrated artwork (unchanged). Its top-right and bottom-right interface marks remain. A typography-only alternative exists in the handoff but is not used without the customer's choice. | Customer choice pending |
+
+The two reconstructions are not recovered originals and are not customer-approved finals. If Jerry declines either, point its `image` record in `src/content/projects.mjs` back at a faithful export.
+
 ## Content still needed from Jerry and Sean
 
-1. **My Side of the Story** — official YouTube trailer URL; full-film decision (public viewing vs. screener by request); confirm "Short film" and current status; year/runtime; approved synopsis (the site uses the logline only); higher-resolution master poster if one exists.
+1. **My Side of the Story** — official YouTube trailer URL; full-film decision (public viewing vs. screener by request); confirm "Short film" and current status; year/runtime; approved synopsis (the site uses the logline only); approval of the repaired-tagline poster (see above).
 2. **Business contact** — public business email and the form delivery route; official social links for the company and for each partner (only @Whitejr916 is linked today).
 3. **Partner bios** — short bio and role for Jerry and for Sean; an approved portrait of each; which person is which in the joint studio photo. The joint photo includes an earlier Black Gumbo logo in its top-right corner — confirm it is still the image to use.
 4. **Film titles** — Inside The Ringing Bell, Butterfly Lane, Coffee Break, Low Hanging Fruit: category, format, exact credit, status, and permission to publish the artwork (Low Hanging Fruit has no artwork yet).

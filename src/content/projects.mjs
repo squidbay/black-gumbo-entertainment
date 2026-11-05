@@ -5,6 +5,9 @@
 // renders only when supplied. Leave unconfirmed fields empty — never guess
 // a format, contribution, status, year or runtime.
 //
+// image: { set, widths, webp } points at a responsive export set
+// (assets/img/<set>-<width>w.jpg|webp); { src } is a legacy single JPEG + -640.
+//
 // kind: 'company-production' | 'company-development' | 'acting-credit' |
 //       'independent-concept' | 'portfolio'
 
@@ -20,7 +23,8 @@ export const projects = [
     presentedBy: 'Presented by Black Gumbo Entertainment',
     contribution: 'Starring, written and directed by Jerry L. White Jr.',
     status: '',
-    image: { src: 'my-side-of-the-story', w: 1170, h: 1159, alt: 'My Side of the Story — official poster. A man stands in a dim kitchen beside the title and the line “Every man has a side. This is mine.”' },
+    // Review reconstruction v1 (repaired top tagline) — awaiting Jerry's approval.
+    image: { set: 'projects/my-side-of-the-story/my-side-of-the-story-review-v1', widths: [320, 640, 960, 1170], webp: true, w: 1170, h: 1159, alt: 'My Side of the Story — official poster. A man stands in a dim kitchen beside the title and the line “Every man has a side. This is mine.”' },
     logline:
       'After the woman he loves walks away, a man is left alone with everything he never got to say. As heartbreak turns into anger and vulnerability, he confronts the memories, unanswered questions, and emotions that remain.',
     introHeading: 'A man alone with everything he never got to say.',
@@ -48,7 +52,7 @@ export const projects = [
     contribution: 'Created and written by Jerry L. White Jr.',
     status: 'In development',
     episodes: '7 episodes (planned)',
-    image: { src: 'queen-nerd', w: 1170, h: 1240, alt: 'Queen Nerd — series poster. A 7 episode miniseries.' },
+    image: { set: 'projects/queen-nerd/queen-nerd-v2', widths: [320, 640, 960, 1170], webp: true, w: 1170, h: 1240, alt: 'Queen Nerd — series poster. A 7 episode miniseries.' },
     logline:
       'A seven-episode limited series created and written by Jerry L. White Jr. and developed by Black Gumbo Entertainment.',
     credits: [
@@ -66,7 +70,7 @@ export const projects = [
     category: 'film',
     kind: 'portfolio',
     page: true,
-    image: { src: 'inside-the-ringing-bell', w: 1010, h: 1518, alt: 'Inside The Ringing Bell — poster. A man looks out of a train window toward a city at sunset.' },
+    image: { set: 'projects/inside-the-ringing-bell/inside-the-ringing-bell-v1', widths: [320, 640, 1010], webp: true, w: 1010, h: 1518, alt: 'Inside The Ringing Bell — poster. A man looks out of a train window toward a city at sunset.' },
   },
   {
     slug: 'butterfly-lane',
@@ -74,7 +78,8 @@ export const projects = [
     category: 'film',
     kind: 'portfolio',
     page: true,
-    image: { src: 'butterfly-lane', w: 1112, h: 1650, alt: 'Butterfly Lane — poster. A bandaged woman sits in a dark armchair beneath the tagline “Beauty can be a dangerous illusion.”' },
+    // Original illustrated artwork, kept until the customer chooses otherwise.
+    image: { src: 'projects/butterfly-lane', w: 1112, h: 1650, alt: 'Butterfly Lane — poster. A bandaged woman sits in a dark armchair beneath the tagline “Beauty can be a dangerous illusion.”' },
   },
   {
     slug: 'coffee-break',
@@ -82,7 +87,8 @@ export const projects = [
     category: 'film',
     kind: 'portfolio',
     page: true,
-    image: { src: 'coffee-break', w: 1170, h: 1615, alt: 'Coffee Break — poster. A man and a woman sit across a café table with two cups of coffee.' },
+    // Review reconstruction v1 (rebuilt top and tabletop, re-typeset title) — awaiting Jerry's approval.
+    image: { set: 'projects/coffee-break/coffee-break-review-v1', widths: [320, 640, 960, 1170], webp: true, w: 1170, h: 1615, alt: 'Coffee Break — poster. A man and a woman sit across a café table with two cups of coffee.' },
   },
   {
     slug: 'low-hanging-fruit',
