@@ -306,6 +306,8 @@ body.menu-open { overflow: hidden; }
 .form-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 20px; }
 .form-actions p { margin: 0; }
 .form-status:empty { display: none; }
+/* Keep the result clear of the sticky header above and Safari's bottom toolbar below. */
+.form-status { scroll-margin: calc(var(--header-h) + 16px) 0 96px; }
 .form-status { border: 1px solid var(--rule); background: var(--surface); padding: 16px; }
 .form-status p { margin: 0 0 8px; }
 .form-status p:last-child { margin: 0; }

@@ -46,9 +46,16 @@ Artwork comes from the SquidBay poster handoff v2 (Nov 5, 2026). Only the web ex
 
 The two reconstructions are not recovered originals and are not customer-approved finals. If Jerry declines either, point its `image` record in `src/content/projects.mjs` back at a faithful export.
 
+## Verification record
+
+- Automated: `node tools/check.mjs [url]` — 13 pages × 7 viewports (desktop to 320 px, phone landscape), menu focus trap, form states, 404; `node tools/frame-fixtures.mjs` for the card frames.
+- Real devices (emulated hardware, actual browsers), 2026-11-11, against the deployed site: **iOS 26.5 Safari** (iPhone 17 simulator) and **Android 14 Chrome 113** (`medium_phone` AVD) — portrait, landscape and rotation; menu, scrolling and sticky header, poster framing, CTAs, and the contact form with the soft keyboard open. Fix found and shipped: the form's "Not sent" result is scrolled into view after Send (it fell below the visible area on phones).
+
 ## Content still needed from Jerry and Sean
 
-1. **My Side of the Story** — official YouTube trailer URL; full-film decision (public viewing vs. screener by request); confirm "Short film" and current status; year/runtime; approved synopsis (the site uses the logline only); approval of the repaired-tagline poster (see above).
+Already supplied and not needed again: the My Side of the Story logline, credits and poster; the Queen Nerd credits and one-sheet wording; the JOLLY TIME disclaimer; the company introduction; the approved logo; the @Whitejr916 channel link. Original posters in other formats are not available and are not requested.
+
+1. **My Side of the Story** — official YouTube trailer URL; full-film decision (public viewing vs. screener by request); confirm "Short film" and current status; year/runtime; approved synopsis (the site uses the logline only); approval of the repaired-tagline poster and the Coffee Break reconstruction, and a choice on Butterfly Lane's artwork (see above).
 2. **Business contact** — public business email and the form delivery route; official social links for the company and for each partner (only @Whitejr916 is linked today).
 3. **Partner bios** — short bio and role for Jerry and for Sean; an approved portrait of each; which person is which in the joint studio photo. The joint photo includes an earlier Black Gumbo logo in its top-right corner — confirm it is still the image to use.
 4. **Film titles** — Inside The Ringing Bell, Butterfly Lane, Coffee Break, Low Hanging Fruit: category, format, exact credit, status, and permission to publish the artwork (Low Hanging Fruit has no artwork yet).

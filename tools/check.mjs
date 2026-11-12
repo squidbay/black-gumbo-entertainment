@@ -149,6 +149,18 @@ for (const vp of VIEWPORTS) {
   if (!/not sent/i.test(status)) fail('contact', `missing honest not-sent state: ${status}`);
   if ((await page.inputValue('#f-message')) !== 'Hello') fail('contact', 'message cleared');
 
+  // The result must be visible after Send even on a short viewport (phone with keyboard just dismissed).
+  await page.setViewportSize({ width: 390, height: 520 });
+  await page.goto(BASE + 'contact/', { waitUntil: 'networkidle' });
+  await page.fill('#f-name', 'Review Test');
+  await page.fill('#f-email', 'review@example.com');
+  await page.fill('#f-message', 'Hello');
+  await page.evaluate(() => document.querySelector('button[type=submit]').scrollIntoView({ block: 'end' }));
+  await page.click('button[type=submit]');
+  await page.waitForTimeout(900);
+  const inView = await page.evaluate(() => { const r = document.querySelector('.form-status').getBoundingClientRect(); return r.height > 0 && r.top >= 0 && r.bottom <= innerHeight; });
+  if (!inView) fail('contact', 'result message not in view after Send on a short viewport');
+
   // Direct navigation to an unknown route returns the styled 404.
   const r404 = await page.goto(BASE + 'no-such-page/', { waitUntil: 'networkidle' });
   console.log(`404 route → HTTP ${r404.status()}`);

@@ -104,7 +104,13 @@
     return problems;
   }
 
-  function showStatus(html) { status.innerHTML = html; }
+  // The result sits below the Send button; on a phone (especially with the keyboard just
+  // dismissed) that is off-screen, so bring it into view. Visible text is announced via role=status.
+  var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+  function showStatus(html) {
+    status.innerHTML = html;
+    if (html && status.scrollIntoView) status.scrollIntoView({ block: 'nearest', behavior: reduceMotion.matches ? 'auto' : 'smooth' });
+  }
 
   form.addEventListener('submit', function (e) {
     e.preventDefault();
